@@ -7,24 +7,45 @@
     <title>画板</title>
     <link rel="stylesheet" href="style.css" />
   </head>
-  <body>
-    <div id="canvas"></div>
-    <script>
-      canvas.onclick = e => {
-        console.log(e.clientX);
-        console.log(e.clientY);
-        let div = document.createElement("div");
-        div.style.position = "absolute";
-        div.style.left = e.clientX + "px";
-        div.style.top = e.clientY + "px";
 
-        div.style.width = "6px";
-        div.style.height = "6px";
-        div.style.marginLeft = "-3px";
-        div.style.marginTop = "-3px";
-        div.style.borderRadius = "50%";
-        div.style.backgroundColor = "black";
-        canvas.appendChild(div);
+  <body>
+    <canvas id="canvas" width="100" height="100"></canvas>
+    <script>
+      let canvas = document.getElementById("canvas");
+      canvas.width = document.documentElement.clientWidth;
+      canvas.height = document.documentElement.clientHeight;
+      let ctx = canvas.getContext("2d");
+      ctx.fillStyle = "black";
+      ctx.strokeStyle = "none";
+
+      let painting = false;
+      var isTouchDevice = "ontouchstart" in document.documentElement;
+      if (isTouchDevice) {
+        canvas.ontouchmove = e => {
+          let x = e.touches[0].clientX;
+          let y = e.touches[0].clientY;
+          console.log(x, y);
+          ctx.beginPath();
+          ctx.arc(x, y, 10, 0, 2 * Math.PI);
+          ctx.stroke();
+          ctx.fill();
+        };
+      } else {
+        canvas.onmousedown = () => {
+          painting = true;
+        };
+      }
+
+      canvas.onmousemove = x => {
+        if (painting === true) {
+          ctx.beginPath();
+          ctx.arc(x.clientX, x.clientY, 10, 0, 2 * Math.PI);
+          ctx.stroke();
+          ctx.fill();
+        }
+      };
+      canvas.onmouseup = () => {
+        painting = false;
       };
     </script>
   </body>
